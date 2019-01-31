@@ -1,13 +1,11 @@
 #!/bin/bash
 #Bash script for installing and renewing lestencrypt ssl cert on haproxy
-#Version 1.1
+#Version 1.2
 #Author: https://gitlab.com/azatuni
 
 DOMAINS=(
- "mobile.cara1.ir"
- "www.cara1.ir"
- "cara1.ir"
- "dmobile.cara1.ir"
+ "example.com"
+ "www.example.com"
 )
 
 #Email for letsencrypt notifications
@@ -40,9 +38,10 @@ echo "Subject: $@" | sendmail -f $FROM_EMAIL -s "SSL renew report for $domain"  
 }
 
 for domain in "${DOMAINS[@]}"
-do
-	CERT_FILE="/etc/letsencrypt/live/$domain\-*/fullchain.pem"
-	KEY_FILE="/etc/letsencrypt/live/$domain\-*/privkey.pem"
+do	
+	CERT_DIR="/etc/letsencrypt/live/`ls /etc/letsencrypt/live/ |grep ^$domain`"
+	CERT_FILE="$CERT_DIR/fullchain.pem"
+	KEY_FILE="$CERT_DIR/privkey.pem"
 	PEM_FILE="/etc/haproxy/certs/$domain.pem"
 	if [ ! -f "$CERT_FILE" ]
 		then	echo "Creating certificate for domain $domain."
